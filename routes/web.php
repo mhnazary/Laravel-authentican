@@ -7,9 +7,10 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\NewPasswordController;
 
 use App\Http\Controllers\Auth\EmailVerificationController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', function () {
-    return redirect()->route('');
+    return view('welcome');
 });
 
 // Guest-only routes
@@ -46,4 +47,24 @@ Route::middleware('auth')->group(function () {
     })->middleware('verified')->name('dashboard');
 
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
-});
+
+    // ── Payment Routes ─────────────────────────────────────────────────────────
+    // All payment routes require the user to be authenticated AND email-verified.
+    Route::middleware('verified')->group(function () {
+        // 1. Show the checkout / product page
+        Route::get('/payment/checkout', [PaymentController::class, 'checkout'])->name('payment.checkout');
+
+        // 2. Create a PayPal order and redirect user to PayPal for approval
+        Route::post('/payment/create', [PaymentController::class, 'create'])->name('payment.create');
+
+        // 3. PayPal redirects here after the user APPROVES — we capture the payment
+        Route::get('/payment/success', [PaymentController::class, 'success'])->name('payment.success');
+
+        // 4. PayPal redirects here if the user CANCELS on PayPal
+        Route::get('/payment/cancel', [PaymentController::class, 'cancel'])->name('payment.cancel');
+
+        // 5. User's full payment history
+        Route::get('/payment/history', [PaymentController::class, 'history'])->name('payment.history');
+    });
+
+}); // end auth middleware group

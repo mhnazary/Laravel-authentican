@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -65,5 +66,17 @@ class User extends Authenticatable implements MustVerifyEmail
 
         // 3. Dispatch the email notification
         $this->notify(new \App\Notifications\SendEmailVerificationCode($code));
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // Relationships
+    // ──────────────────────────────────────────────────────────────────────────
+
+    /**
+     * All payments made by this user.
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 }

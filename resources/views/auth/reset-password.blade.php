@@ -24,7 +24,7 @@
         <div class="form-group">
             <label for="email">Email Address</label>
             <div class="input-wrapper">
-                <input id="email" type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $request->email) }}" required autocomplete="email">
+                <input id="email" type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $email) }}" required autocomplete="email">
             </div>
             @error('email')
                 <span class="error-message">{{ $message }}</span>
